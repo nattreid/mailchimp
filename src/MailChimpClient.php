@@ -29,6 +29,9 @@ class MailChimpClient
 	private $uri;
 
 	/** @var string */
+	private $dc;
+
+	/** @var string */
 	private $apiKey;
 
 	/** @var string */
@@ -45,9 +48,7 @@ class MailChimpClient
 	 */
 	public function __construct($debug, $apiKey, $dc)
 	{
-		if (Strings::match($dc, '/^us([1-9]|1[0-4])$/') === null) {
-			throw new InvalidStateException('Invalid dc (available: us1 - us14)');
-		}
+		$this->dc = $dc;
 		$this->uri = "https://$dc.api.mailchimp.com/3.0/";
 		$this->apiKey = $apiKey;
 		$this->debug = (bool)$debug;
@@ -78,6 +79,9 @@ class MailChimpClient
 	private function getClient()
 	{
 		if ($this->client === null) {
+			if (Strings::match($this->dc, '/^us([1-9]|1[0-4])$/') === null) {
+				throw new InvalidStateException('Invalid dc (available: us1 - us14)');
+			}
 			$this->client = new Client(['base_uri' => $this->uri]);
 		}
 		return $this->client;
