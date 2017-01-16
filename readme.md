@@ -7,7 +7,8 @@ extensions:
 
 smartEmailing:
     dc: 'us1'
-    key: 'apiKey'
+    apiKey: 'apiKey'
+    listId: 'fs5f4s68e' # vychozi seznam pro ukladani kontaktu
     debug: true # default false
 ```
 

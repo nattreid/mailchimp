@@ -5,7 +5,6 @@ namespace NAttreid\SmartEmailing\DI;
 use NAttreid\MailChimp\MailChimpClient;
 use Nette\DI\CompilerExtension;
 use Nette\InvalidStateException;
-use Nette\Utils\Strings;
 
 /**
  * Class MailChimpExtension
@@ -17,6 +16,7 @@ class MailChimpExtension extends CompilerExtension
 	private $defaults = [
 		'apiKey' => null,
 		'dc' => null,
+		'listId' => null,
 		'debug' => false
 	];
 
@@ -29,12 +29,17 @@ class MailChimpExtension extends CompilerExtension
 			throw new InvalidStateException("MailChimp: 'apiKey' does not set in config.neon");
 		}
 
-		if (Strings::match($config['dc'], '/^(us[1-9]|1[0-4])$/') === null) {
-			throw new InvalidStateException("MailChimp: 'dc' is invalid in config.neon (available: us1 - us14)");
+		if ($config['dc'] === null) {
+			throw new InvalidStateException("MailChimp: 'dc' does not set in config.neon");
+		}
+
+		if ($config['listId'] === null) {
+			throw new InvalidStateException("MailChimp: 'listId' does not set in config.neon");
 		}
 
 		$builder->addDefinition($this->prefix('client'))
 			->setClass(MailChimpClient::class)
-			->setArguments([$config['debug'], $config['apiKey'], $config['dc']]);
+			->setArguments([$config['debug'], $config['apiKey'], $config['dc']])
+			->addSetup('setListId', [$config['listId']]);
 	}
 }
