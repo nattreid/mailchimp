@@ -1,0 +1,6 @@
+web:
+    hooks:
+        mailChimp:
+            title: "MailChimp"
+            apiKey: "API key"
+            list: "List"

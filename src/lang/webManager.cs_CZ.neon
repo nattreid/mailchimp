@@ -1,0 +1,6 @@
+web:
+    hooks:
+        mailChimp:
+            title: "MailChimp"
+            apiKey: "API klíč"
+            list: "Seznam"

@@ -1,8 +1,11 @@
 <?php
 
-namespace NAttreid\SmartEmailing\DI;
+namespace NAttreid\MailChimp\DI;
 
+use NAttreid\Cms\ExtensionTranslatorTrait;
+use NAttreid\MailChimp\Hooks\MailChimpHook;
 use NAttreid\MailChimp\MailChimpClient;
+use NAttreid\WebManager\Services\Hooks\HookService;
 use Nette\DI\CompilerExtension;
 use Nette\InvalidStateException;
 
@@ -13,6 +16,8 @@ use Nette\InvalidStateException;
  */
 class MailChimpExtension extends CompilerExtension
 {
+	use ExtensionTranslatorTrait;
+
 	private $defaults = [
 		'apiKey' => null,
 		'dc' => null,
@@ -41,5 +46,18 @@ class MailChimpExtension extends CompilerExtension
 			->setClass(MailChimpClient::class)
 			->setArguments([$config['debug'], $config['apiKey'], $config['dc']])
 			->addSetup('setListId', [$config['listId']]);
+
+		$hook = $builder->getByType(HookService::class);
+		if ($hook) {
+			$mcHook = $builder->addDefinition($this->prefix('mailChimpHook'))
+				->setClass(MailChimpHook::class);
+
+			$builder->getDefinition($hook)
+				->addSetup('addHook', [$mcHook]);
+
+			$this->setTranslation(__DIR__ . '/../lang/', [
+				'webManager'
+			]);
+		}
 	}
 }
