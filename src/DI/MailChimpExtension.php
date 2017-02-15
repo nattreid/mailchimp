@@ -2,11 +2,13 @@
 
 namespace NAttreid\MailChimp\DI;
 
+use NAttreid\Cms\Configurator\Configurator;
 use NAttreid\Cms\ExtensionTranslatorTrait;
 use NAttreid\MailChimp\Hooks\MailChimpHook;
 use NAttreid\MailChimp\MailChimpClient;
 use NAttreid\WebManager\Services\Hooks\HookService;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Statement;
 use Nette\InvalidStateException;
 
 /**
@@ -30,6 +32,23 @@ class MailChimpExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults, $this->getConfig());
 
+		$hook = $builder->getByType(HookService::class);
+		if ($hook) {
+			$mcHook = $builder->addDefinition($this->prefix('mailChimpHook'))
+				->setClass(MailChimpHook::class);
+
+			$builder->getDefinition($hook)
+				->addSetup('addHook', [$mcHook]);
+
+			$this->setTranslation(__DIR__ . '/../lang/', [
+				'webManager'
+			]);
+
+			$config['dc'] = new Statement('?->mailchimpDC', ['@' . Configurator::class]);
+			$config['apiKey'] = new Statement('?->mailchimpApiKey', ['@' . Configurator::class]);
+			$config['listId'] = new Statement('?->mailchimpListId', ['@' . Configurator::class]);
+		}
+
 		if ($config['apiKey'] === null) {
 			throw new InvalidStateException("MailChimp: 'apiKey' does not set in config.neon");
 		}
@@ -46,18 +65,5 @@ class MailChimpExtension extends CompilerExtension
 			->setClass(MailChimpClient::class)
 			->setArguments([$config['debug'], $config['apiKey'], $config['dc']])
 			->addSetup('setListId', [$config['listId']]);
-
-		$hook = $builder->getByType(HookService::class);
-		if ($hook) {
-			$mcHook = $builder->addDefinition($this->prefix('mailChimpHook'))
-				->setClass(MailChimpHook::class);
-
-			$builder->getDefinition($hook)
-				->addSetup('addHook', [$mcHook]);
-
-			$this->setTranslation(__DIR__ . '/../lang/', [
-				'webManager'
-			]);
-		}
 	}
 }
