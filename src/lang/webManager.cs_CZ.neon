@@ -4,3 +4,4 @@ web:
             title: "MailChimp"
             apiKey: "API klíč"
             list: "Seznam"
+            info: "Pro správné fungování služby je třeba mít nastavený seznam. Pokud služba není nastavena, seznam se nastaví až po jejím nastavní."

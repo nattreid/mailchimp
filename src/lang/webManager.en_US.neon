@@ -4,3 +4,4 @@ web:
             title: "MailChimp"
             apiKey: "API key"
             list: "List"
+            info: "For proper functioning of the services should be set list. If the service is not set, the list will be set up after preference."

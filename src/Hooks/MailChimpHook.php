@@ -7,6 +7,7 @@ use IPub\FlashMessages\FlashNotifier;
 use NAttreid\Cms\Configurator\Configurator;
 use NAttreid\Cms\Factories\FormFactory;
 use NAttreid\Form\Form;
+use NAttreid\MailChimp\CredentialsNotSetException;
 use NAttreid\MailChimp\MailChimpClient;
 use NAttreid\WebManager\Services\Hooks\HookFactory;
 use Nette\InvalidArgumentException;
@@ -31,6 +32,11 @@ class MailChimpHook extends HookFactory
 		$this->mailChimpClient = $mailChimpClient;
 	}
 
+	public function init()
+	{
+		$this->latte = __DIR__ . '/mailChimpHook.latte';
+	}
+
 	/** @return Form */
 	public function create()
 	{
@@ -45,12 +51,12 @@ class MailChimpHook extends HookFactory
 			foreach ($lists as $row) {
 				$items[$row->id] = $row->name;
 			}
-			$select = $form->addSelectUntranslated('list', 'webManager.web.hooks.mailChimp.list', $items, 'form.none');
+			$select = $form->addSelectUntranslated('list', 'webManager.web.hooks.mailChimp.list', $items);
 
 			$select->setDefaultValue($this->configurator->mailchimpListId);
 
 		} catch (ClientException $ex) {
-		} catch (\NAttreid\MailChimp\CredentialsNotSetException $ex) {
+		} catch (CredentialsNotSetException $ex) {
 		} catch (InvalidArgumentException $ex) {
 		} catch (InvalidStateException $ex) {
 		}
