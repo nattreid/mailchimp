@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace NAttreid\MailChimp\Hooks;
 
 use GuzzleHttp\Exception\ClientException;
@@ -12,6 +14,7 @@ use NAttreid\MailChimp\MailChimpClient;
 use NAttreid\WebManager\Services\Hooks\HookFactory;
 use Nette\InvalidArgumentException;
 use Nette\InvalidStateException;
+use Nette\Utils\ArrayHash;
 
 /**
  * Class MailChimpHook
@@ -38,7 +41,7 @@ class MailChimpHook extends HookFactory
 	}
 
 	/** @return Form */
-	public function create()
+	public function create(): Form
 	{
 		$form = $this->formFactory->create();
 
@@ -68,7 +71,7 @@ class MailChimpHook extends HookFactory
 		return $form;
 	}
 
-	public function mailchimpFormSucceeded(Form $form, $values)
+	public function mailchimpFormSucceeded(Form $form, ArrayHash $values)
 	{
 		@list(, $dc) = explode('-', $values->apiKey);
 		$this->configurator->mailchimpDC = $dc;

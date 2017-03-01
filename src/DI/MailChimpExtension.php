@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace NAttreid\MailChimp\DI;
 
 use NAttreid\Cms\Configurator\Configurator;

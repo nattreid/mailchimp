@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace NAttreid\MailChimp;
 
 use GuzzleHttp\Client;
@@ -46,7 +48,7 @@ class MailChimpClient
 	 * @param string $apiKey
 	 * @param string $dc
 	 */
-	public function __construct($debug, $apiKey, $dc)
+	public function __construct(bool $debug, string $apiKey, string $dc)
 	{
 		$this->dc = $dc;
 		$this->uri = "https://$dc.api.mailchimp.com/3.0/";
@@ -58,7 +60,7 @@ class MailChimpClient
 	 * Set default ContactList for Contact
 	 * @param int|null $id
 	 */
-	public function setListId($id = null)
+	public function setListId(int $id = null)
 	{
 		$this->listId = $id ?: null;
 	}
@@ -76,7 +78,7 @@ class MailChimpClient
 		return null;
 	}
 
-	private function getClient()
+	private function getClient(): Client
 	{
 		if ($this->client === null) {
 			if (Strings::match($this->dc, '/^us([1-9]|1[0-4])$/') === null) {
@@ -96,7 +98,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	private function request($method, $url, array $args = [])
+	private function request(string $method, string $url, array $args = [])
 	{
 		if (empty($this->apiKey)) {
 			throw new CredentialsNotSetException('ApiKey must be set');
@@ -147,7 +149,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	private function get($url)
+	private function get(string $url)
 	{
 		return $this->request('GET', $url);
 	}
@@ -160,7 +162,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	private function post($url, array $args = [])
+	private function post(string $url, array $args = [])
 	{
 		return $this->request('POST', $url, $args);
 	}
@@ -172,7 +174,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	private function delete($url)
+	private function delete(string $url)
 	{
 		return $this->request('DELETE', $url);
 	}
@@ -185,7 +187,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	private function patch($url, array $args = [])
+	private function patch(string $url, array $args = [])
 	{
 		return $this->request('PATCH', $url, $args);
 	}
@@ -198,7 +200,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	private function put($url, array $args = [])
+	private function put(string $url, array $args = [])
 	{
 		return $this->request('PUT', $url, $args);
 	}
@@ -225,7 +227,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	public function findLists($email = null, $limit = 10, $offset = 0)
+	public function findLists(string $email = null, int $limit = 10, int $offset = 0)
 	{
 		$args = [
 			'limit=' . $limit,
@@ -245,7 +247,7 @@ class MailChimpClient
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	public function getList($id)
+	public function getList(string $id)
 	{
 		return $this->get('lists/' . $id);
 	}
@@ -264,28 +266,28 @@ class MailChimpClient
 
 	/**
 	 * Get information about a specific list member
-	 * @param $email
+	 * @param string $email
 	 * @return bool|stdClass
 	 * @throws CredentialsNotSetException
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	public function getMember($email)
+	public function getMember(string $email)
 	{
 		return $this->get("lists/{$this->listId}/members/" . md5($email));
 	}
 
 	/**
 	 * Add or update a list member
-	 * @param $email
-	 * @param null $name
-	 * @param null $surname
+	 * @param string $email
+	 * @param string $name
+	 * @param string $surname
 	 * @return bool|stdClass
 	 * @throws CredentialsNotSetException
 	 * @throws ConnectException
 	 * @throws ClientException
 	 */
-	public function createMember($email, $name = null, $surname = null)
+	public function createMember(string $email, string $name = null, string $surname = null)
 	{
 		$data = [
 			'email_address' => $email,
