@@ -58,9 +58,9 @@ class MailChimpClient
 
 	/**
 	 * Set default ContactList for Contact
-	 * @param int|null $id
+	 * @param string|null $id
 	 */
-	public function setListId(int $id = null)
+	public function setListId(string $id = null)
 	{
 		$this->listId = $id ?: null;
 	}
