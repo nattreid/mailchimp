@@ -1,4 +1,4 @@
-# MailChimp pro Nette Framework
+# MailChimp API pro Nette Framework
 
 Nastavení v **config.neon**
 ```neon
