@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NAttreid\MailChimp\Hooks;
 
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 use IPub\FlashMessages\FlashNotifier;
 use NAttreid\Cms\Configurator\Configurator;
 use NAttreid\Cms\Factories\DataGridFactory;
@@ -13,7 +14,6 @@ use NAttreid\Form\Form;
 use NAttreid\MailChimp\CredentialsNotSetException;
 use NAttreid\MailChimp\MailChimpClient;
 use NAttreid\WebManager\Services\Hooks\HookFactory;
-use Nette\Application\UI\Control;
 use Nette\ComponentModel\Component;
 use Nette\InvalidArgumentException;
 use Nette\InvalidStateException;
@@ -65,6 +65,7 @@ class MailChimpHook extends HookFactory
 		} catch (CredentialsNotSetException $ex) {
 		} catch (InvalidArgumentException $ex) {
 		} catch (InvalidStateException $ex) {
+		} catch (ConnectException $ex) {
 		}
 
 		$form->addSubmit('save', 'form.save');
