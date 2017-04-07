@@ -1,17 +1,20 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace NAttreid\MailChimp\Hooks;
 
 use GuzzleHttp\Exception\ClientException;
 use IPub\FlashMessages\FlashNotifier;
 use NAttreid\Cms\Configurator\Configurator;
+use NAttreid\Cms\Factories\DataGridFactory;
 use NAttreid\Cms\Factories\FormFactory;
 use NAttreid\Form\Form;
 use NAttreid\MailChimp\CredentialsNotSetException;
 use NAttreid\MailChimp\MailChimpClient;
 use NAttreid\WebManager\Services\Hooks\HookFactory;
+use Nette\Application\UI\Control;
+use Nette\ComponentModel\Component;
 use Nette\InvalidArgumentException;
 use Nette\InvalidStateException;
 use Nette\Utils\ArrayHash;
@@ -29,9 +32,9 @@ class MailChimpHook extends HookFactory
 	/** @var MailChimpClient */
 	private $mailChimpClient;
 
-	public function __construct(FormFactory $formFactory, Configurator $configurator, FlashNotifier $flashNotifier, MailChimpClient $mailChimpClient)
+	public function __construct(FormFactory $formFactory, DataGridFactory $gridFactory, Configurator $configurator, FlashNotifier $flashNotifier, MailChimpClient $mailChimpClient)
 	{
-		parent::__construct($formFactory, $configurator, $flashNotifier);
+		parent::__construct($formFactory, $gridFactory, $configurator, $flashNotifier);
 		$this->mailChimpClient = $mailChimpClient;
 	}
 
@@ -40,8 +43,8 @@ class MailChimpHook extends HookFactory
 		$this->latte = __DIR__ . '/mailChimpHook.latte';
 	}
 
-	/** @return Form */
-	public function create(): Form
+	/** @return Component */
+	public function create(): Component
 	{
 		$form = $this->formFactory->create();
 
