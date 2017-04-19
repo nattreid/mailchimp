@@ -38,7 +38,7 @@ class MailChimpHook extends HookFactory
 		$this->mailChimpClient = $mailChimpClient;
 	}
 
-	public function init()
+	public function init(): void
 	{
 		$this->latte = __DIR__ . '/mailChimpHook.latte';
 	}
@@ -75,7 +75,7 @@ class MailChimpHook extends HookFactory
 		return $form;
 	}
 
-	public function mailchimpFormSucceeded(Form $form, ArrayHash $values)
+	public function mailchimpFormSucceeded(Form $form, ArrayHash $values): void
 	{
 		@list(, $dc) = explode('-', $values->apiKey);
 		$this->configurator->mailchimpDC = $dc;
