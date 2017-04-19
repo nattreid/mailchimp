@@ -61,11 +61,7 @@ class MailChimpHook extends HookFactory
 
 			$select->setDefaultValue($this->configurator->mailchimpListId);
 
-		} catch (ClientException $ex) {
-		} catch (CredentialsNotSetException $ex) {
-		} catch (InvalidArgumentException $ex) {
-		} catch (InvalidStateException $ex) {
-		} catch (ConnectException $ex) {
+		} catch (ClientException | CredentialsNotSetException | InvalidArgumentException | InvalidStateException | ConnectException $ex) {
 		}
 
 		$form->addSubmit('save', 'form.save');
