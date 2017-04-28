@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\RequestOptions;
+use NAttreid\MailChimp\Hooks\MailChimpConfig;
 use Nette\InvalidStateException;
 use Nette\SmartObject;
 use Nette\Utils\Json;
@@ -30,39 +31,21 @@ class MailChimpClient
 	/** @var string */
 	private $uri;
 
-	/** @var string */
-	private $dc;
-
-	/** @var string */
-	private $apiKey;
-
-	/** @var string */
-	private $listId;
+	/** @var MailChimpConfig */
+	private $config;
 
 	/** @var bool */
 	private $debug;
 
-	/**
-	 * Client constructor.
-	 * @param bool $debug
-	 * @param string $apiKey
-	 * @param string $dc
-	 */
-	public function __construct(bool $debug, string $apiKey, string $dc)
+	public function __construct(bool $debug, MailChimpConfig $config)
 	{
-		$this->dc = $dc;
-		$this->uri = "https://$dc.api.mailchimp.com/3.0/";
-		$this->apiKey = $apiKey;
-		$this->debug = (bool) $debug;
-	}
+		$this->config = $config;
+		$this->uri = "https://{$config->dc}.api.mailchimp.com/3.0/";
+		$this->debug = $debug;
 
-	/**
-	 * Set default ContactList for Contact
-	 * @param string|null $id
-	 */
-	public function setListId(string $id = null): void
-	{
-		$this->listId = $id ?: null;
+		if ($config->apiKey === null) {
+			throw new InvalidStateException("MailChimp: 'apiKey' does not set");
+		}
 	}
 
 	/**
@@ -81,7 +64,7 @@ class MailChimpClient
 	private function getClient(): Client
 	{
 		if ($this->client === null) {
-			if (Strings::match($this->dc, '/^us([1-9]|1[0-4])$/') === null) {
+			if (Strings::match($this->config->dc, '/^us([1-9]|1[0-4])$/') === null) {
 				throw new InvalidStateException('Invalid dc (available: us1 - us14)');
 			}
 			$this->client = new Client(['base_uri' => $this->uri]);
@@ -100,7 +83,7 @@ class MailChimpClient
 	 */
 	private function request(string $method, string $url, array $args = []): ?stdClass
 	{
-		if (empty($this->apiKey)) {
+		if (empty($this->config->apiKey)) {
 			throw new CredentialsNotSetException('ApiKey must be set');
 		}
 
@@ -108,7 +91,7 @@ class MailChimpClient
 			$options = [
 				RequestOptions::AUTH => [
 					'user',
-					$this->apiKey
+					$this->config->apiKey
 				]
 			];
 
@@ -261,7 +244,11 @@ class MailChimpClient
 	 */
 	public function findMembers(): ?stdClass
 	{
-		return $this->get("lists/{$this->listId}/members");
+		if ($this->config->listId === null) {
+			throw new InvalidStateException("MailChimp: 'listId' does not set");
+		}
+
+		return $this->get("lists/{$this->config->listId}/members");
 	}
 
 	/**
@@ -274,7 +261,11 @@ class MailChimpClient
 	 */
 	public function getMember(string $email): ?stdClass
 	{
-		return $this->get("lists/{$this->listId}/members/" . md5($email));
+		if ($this->config->listId === null) {
+			throw new InvalidStateException("MailChimp: 'listId' does not set");
+		}
+
+		return $this->get("lists/{$this->config->listId}/members/" . md5($email));
 	}
 
 	/**
@@ -289,6 +280,10 @@ class MailChimpClient
 	 */
 	public function createMember(string $email, string $name = null, string $surname = null): ?stdClass
 	{
+		if ($this->config->listId === null) {
+			throw new InvalidStateException("MailChimp: 'listId' does not set");
+		}
+
 		$data = [
 			'email_address' => $email,
 			'status_if_new' => 'subscribed',
@@ -300,6 +295,6 @@ class MailChimpClient
 		if ($surname !== null) {
 			$data['merge_fields']['LNAME'] = $surname;
 		}
-		return $this->put("lists/{$this->listId}/members/" . md5($email), $data);
+		return $this->put("lists/{$this->config->listId}/members/" . md5($email), $data);
 	}
 }

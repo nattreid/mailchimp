@@ -1,17 +1,17 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace NAttreid\MailChimp\DI;
 
 use NAttreid\Cms\Configurator\Configurator;
 use NAttreid\Cms\DI\ExtensionTranslatorTrait;
+use NAttreid\MailChimp\Hooks\MailChimpConfig;
 use NAttreid\MailChimp\Hooks\MailChimpHook;
 use NAttreid\MailChimp\MailChimpClient;
 use NAttreid\WebManager\Services\Hooks\HookService;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
-use Nette\InvalidStateException;
 
 /**
  * Class MailChimpExtension
@@ -24,7 +24,6 @@ class MailChimpExtension extends CompilerExtension
 
 	private $defaults = [
 		'apiKey' => null,
-		'dc' => null,
 		'listId' => null,
 		'debug' => false
 	];
@@ -43,26 +42,15 @@ class MailChimpExtension extends CompilerExtension
 				'webManager'
 			]);
 
-			$config['dc'] = new Statement('?->mailchimpDC', ['@' . Configurator::class]);
-			$config['apiKey'] = new Statement('?->mailchimpApiKey', ['@' . Configurator::class]);
-			$config['listId'] = new Statement('?->mailchimpListId', ['@' . Configurator::class]);
-		}
-
-		if ($config['apiKey'] === null) {
-			throw new InvalidStateException("MailChimp: 'apiKey' does not set in config.neon");
-		}
-
-		if ($config['dc'] === null) {
-			throw new InvalidStateException("MailChimp: 'dc' does not set in config.neon");
-		}
-
-		if ($config['listId'] === null) {
-			throw new InvalidStateException("MailChimp: 'listId' does not set in config.neon");
+			$mailChimp = new Statement('?->mailChimp \?: new ' . MailChimpConfig::class, ['@' . Configurator::class]);
+		} else {
+			$mailChimp = new MailChimpConfig;
+			$mailChimp->apiKey = $config['apiKey'];
+			$mailChimp->listId = $config['listId'];
 		}
 
 		$builder->addDefinition($this->prefix('client'))
 			->setClass(MailChimpClient::class)
-			->setArguments([$config['debug'], $config['apiKey'], $config['dc']])
-			->addSetup('setListId', [$config['listId']]);
+			->setArguments([$config['debug'], $mailChimp]);
 	}
 }

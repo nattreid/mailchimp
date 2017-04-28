@@ -6,16 +6,11 @@ namespace NAttreid\MailChimp\Hooks;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
-use IPub\FlashMessages\FlashNotifier;
-use NAttreid\Cms\Configurator\Configurator;
-use NAttreid\Cms\Factories\DataGridFactory;
-use NAttreid\Cms\Factories\FormFactory;
 use NAttreid\Form\Form;
 use NAttreid\MailChimp\CredentialsNotSetException;
 use NAttreid\MailChimp\MailChimpClient;
 use NAttreid\WebManager\Services\Hooks\HookFactory;
 use Nette\ComponentModel\Component;
-use Nette\InvalidArgumentException;
 use Nette\InvalidStateException;
 use Nette\Utils\ArrayHash;
 
@@ -29,18 +24,13 @@ class MailChimpHook extends HookFactory
 	/** @var IConfigurator */
 	protected $configurator;
 
-	/** @var MailChimpClient */
-	private $mailChimpClient;
-
-	public function __construct(FormFactory $formFactory, DataGridFactory $gridFactory, Configurator $configurator, FlashNotifier $flashNotifier, MailChimpClient $mailChimpClient)
-	{
-		parent::__construct($formFactory, $gridFactory, $configurator, $flashNotifier);
-		$this->mailChimpClient = $mailChimpClient;
-	}
-
 	public function init(): void
 	{
 		$this->latte = __DIR__ . '/mailChimpHook.latte';
+
+		if (!$this->configurator->mailChimp) {
+			$this->configurator->mailChimp = new MailChimpConfig;
+		}
 	}
 
 	/** @return Component */
@@ -49,19 +39,22 @@ class MailChimpHook extends HookFactory
 		$form = $this->formFactory->create();
 
 		$form->addText('apiKey', 'webManager.web.hooks.mailChimp.apiKey')
-			->setDefaultValue($this->configurator->mailchimpApiKey);
+			->setDefaultValue($this->configurator->mailChimp->apiKey);
 
 		try {
-			$lists = $this->mailChimpClient->findLists()->lists;
+			$mailChimpClient = new MailChimpClient(false, $this->configurator->mailChimp);
+			$lists = $mailChimpClient->findLists()->lists;
 			$items = [];
 			foreach ($lists as $row) {
 				$items[$row->id] = $row->name;
 			}
-			$select = $form->addSelectUntranslated('list', 'webManager.web.hooks.mailChimp.list', $items);
+			$select = $form->addSelectUntranslated('list', 'webManager.web.hooks.mailChimp.list', $items, 'form.none');
+			$select->addConditionOn($form['apiKey'], $form::FILLED)
+				->addRule($form::FILLED);
 
-			$select->setDefaultValue($this->configurator->mailchimpListId);
+			$select->setDefaultValue($this->configurator->mailChimp->listId);
 
-		} catch (ClientException | CredentialsNotSetException | InvalidArgumentException | InvalidStateException | ConnectException $ex) {
+		} catch (ClientException | CredentialsNotSetException | InvalidStateException | ConnectException $ex) {
 		}
 
 		$form->addSubmit('save', 'form.save');
@@ -73,11 +66,15 @@ class MailChimpHook extends HookFactory
 
 	public function mailchimpFormSucceeded(Form $form, ArrayHash $values): void
 	{
-		@list(, $dc) = explode('-', $values->apiKey);
-		$this->configurator->mailchimpDC = $dc;
-		$this->configurator->mailchimpApiKey = $values->apiKey;
-		$this->configurator->mailchimpListId = isset($values->list) ? $values->list : null;
+		$config = $this->configurator->mailChimp;
+
+		$config->apiKey = $values->apiKey;
+		$config->listId = empty($values->list) ? null : $values->list;
+
+		$this->configurator->mailChimp = $config;
 
 		$this->flashNotifier->success('default.dataSaved');
+
+		$this->onDataChange();
 	}
 }

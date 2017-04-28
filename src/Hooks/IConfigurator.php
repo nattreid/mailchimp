@@ -7,9 +7,7 @@ namespace NAttreid\MailChimp\Hooks;
 /**
  * Interface IConfigurator
  *
- * @property string $mailchimpDC
- * @property string $mailchimpApiKey
- * @property string $mailchimpListId
+ * @property MailChimpConfig $mailChimp
  *
  * @author Attreid <attreid@gmail.com>
  */
