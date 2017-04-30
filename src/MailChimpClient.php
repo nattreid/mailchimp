@@ -42,10 +42,6 @@ class MailChimpClient
 		$this->config = $config;
 		$this->uri = "https://{$config->dc}.api.mailchimp.com/3.0/";
 		$this->debug = $debug;
-
-		if ($config->apiKey === null) {
-			throw new InvalidStateException("MailChimp: 'apiKey' does not set");
-		}
 	}
 
 	/**
