@@ -123,9 +123,13 @@ class MailChimpClient
 
 	/**
 	 * @throws ListIdNotSetException
+	 * @throws CredentialsNotSetException
 	 */
 	private function checkList(): void
 	{
+		if (empty($this->config->apiKey)) {
+			throw new CredentialsNotSetException('ApiKey must be set');
+		}
 		if ($this->config->listId === null) {
 			throw new ListIdNotSetException("ListId must be set");
 		}
