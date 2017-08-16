@@ -122,6 +122,16 @@ class MailChimpClient
 	}
 
 	/**
+	 * @throws ListIdNotSetException
+	 */
+	private function checkList(): void
+	{
+		if ($this->config->listId === null) {
+			throw new ListIdNotSetException("ListId must be set");
+		}
+	}
+
+	/**
 	 * @param string $url
 	 * @return stdClass|null
 	 * @throws CredentialsNotSetException
@@ -237,13 +247,11 @@ class MailChimpClient
 	 * @throws CredentialsNotSetException
 	 * @throws ConnectException
 	 * @throws ClientException
+	 * @throws ListIdNotSetException
 	 */
 	public function findMembers(): ?stdClass
 	{
-		if ($this->config->listId === null) {
-			throw new InvalidStateException("MailChimp: 'listId' does not set");
-		}
-
+		$this->checkList();
 		return $this->get("lists/{$this->config->listId}/members");
 	}
 
@@ -254,13 +262,11 @@ class MailChimpClient
 	 * @throws CredentialsNotSetException
 	 * @throws ConnectException
 	 * @throws ClientException
+	 * @throws ListIdNotSetException
 	 */
 	public function getMember(string $email): ?stdClass
 	{
-		if ($this->config->listId === null) {
-			throw new InvalidStateException("MailChimp: 'listId' does not set");
-		}
-
+		$this->checkList();
 		return $this->get("lists/{$this->config->listId}/members/" . md5($email));
 	}
 
@@ -273,13 +279,11 @@ class MailChimpClient
 	 * @throws CredentialsNotSetException
 	 * @throws ConnectException
 	 * @throws ClientException
+	 * @throws ListIdNotSetException
 	 */
 	public function createMember(string $email, string $name = null, string $surname = null): ?stdClass
 	{
-		if ($this->config->listId === null) {
-			throw new InvalidStateException("MailChimp: 'listId' does not set");
-		}
-
+		$this->checkList();
 		$data = [
 			'email_address' => $email,
 			'status_if_new' => 'subscribed',
