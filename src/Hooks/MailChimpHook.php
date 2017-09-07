@@ -14,6 +14,7 @@ use Nette\ComponentModel\Component;
 use Nette\InvalidArgumentException;
 use Nette\InvalidStateException;
 use Nette\Utils\ArrayHash;
+use Tracy\Debugger;
 
 /**
  * Class MailChimpHook
@@ -56,9 +57,10 @@ class MailChimpHook extends HookFactory
 			try {
 				$select->setDefaultValue($this->configurator->mailChimp->listId);
 			} catch (InvalidArgumentException $ex) {
-				
+
 			}
 		} catch (ClientException | CredentialsNotSetException | InvalidStateException | ConnectException $ex) {
+			Debugger::log($ex, Debugger::EXCEPTION);
 		}
 
 		$form->addSubmit('save', 'form.save');
