@@ -36,7 +36,7 @@ class MailChimpExtension extends CompilerExtension
 		$hook = $builder->getByType(HookService::class);
 		if ($hook) {
 			$builder->addDefinition($this->prefix('mailChimpHook'))
-				->setClass(MailChimpHook::class);
+				->setType(MailChimpHook::class);
 
 			$this->setTranslation(__DIR__ . '/../lang/', [
 				'webManager'
@@ -50,7 +50,7 @@ class MailChimpExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('client'))
-			->setClass(MailChimpClient::class)
+			->setType(MailChimpClient::class)
 			->setArguments([$config['debug'], $mailChimp]);
 	}
 }
