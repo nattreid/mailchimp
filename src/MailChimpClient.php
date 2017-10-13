@@ -109,6 +109,7 @@ class MailChimpClient
 				default:
 					throw $ex;
 					break;
+				case 400:
 				case 404:
 				case 422:
 					if ($this->debug) {
