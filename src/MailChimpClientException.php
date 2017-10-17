@@ -7,11 +7,11 @@ namespace NAttreid\MailChimp;
 use Exception;
 
 /**
- * Class ListIdNotSetException
+ * Class MailChimpClientException
  *
  * @author Attreid <attreid@gmail.com>
  */
-class ListIdNotSetException extends Exception
+class MailChimpClientException extends Exception
 {
 
 }

@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace NAttreid\MailChimp\Hooks;
 
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
 use NAttreid\Form\Form;
 use NAttreid\MailChimp\CredentialsNotSetException;
 use NAttreid\MailChimp\MailChimpClient;
+use NAttreid\MailChimp\MailChimpClientException;
 use NAttreid\WebManager\Services\Hooks\HookFactory;
 use Nette\ComponentModel\Component;
 use Nette\InvalidArgumentException;
-use Nette\InvalidStateException;
 use Nette\Utils\ArrayHash;
 use Tracy\Debugger;
 
@@ -61,7 +59,7 @@ class MailChimpHook extends HookFactory
 			}
 		} catch (CredentialsNotSetException $ex) {
 
-		} catch (ClientException | InvalidStateException | ConnectException $ex) {
+		} catch (MailChimpClientException $ex) {
 			Debugger::log($ex, Debugger::EXCEPTION);
 		}
 
