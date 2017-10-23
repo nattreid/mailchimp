@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NAttreid\MailChimp;
 
 use Exception;
+use Throwable;
 
 /**
  * Class MailChimpClientException
@@ -13,5 +14,8 @@ use Exception;
  */
 class MailChimpClientException extends Exception
 {
-
+	public function __construct(Throwable $previous = null)
+	{
+		parent::__construct('', 0, $previous);
+	}
 }
