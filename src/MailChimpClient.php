@@ -7,7 +7,8 @@ namespace NAttreid\MailChimp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\RequestOptions;
-use NAttreid\MailChimp\Hooks\MailChimpConfig;
+use NAttreid\MailChimp\DI\MailChimpConfig;
+use NAttreid\MailChimp\Entities\Line;
 use Nette\InvalidStateException;
 use Nette\SmartObject;
 use Nette\Utils\Json;
@@ -17,6 +18,9 @@ use stdClass;
 
 /**
  * Class Client
+ *
+ * @property string $campaignId
+ * @property string $currency
  *
  * @author Attreid <attreid@gmail.com>
  */
@@ -36,11 +40,41 @@ class MailChimpClient
 	/** @var bool */
 	private $debug;
 
-	public function __construct(bool $debug, MailChimpConfig $config)
+	/** @var string */
+	private $tempDir;
+
+	/** @var string */
+	private $campaignId;
+
+	/** @var string */
+	private $currency;
+
+	public function __construct(bool $debug, MailChimpConfig $config, string $tempDir)
 	{
 		$this->config = $config;
 		$this->uri = "https://{$config->dc}.api.mailchimp.com/3.0/";
 		$this->debug = $debug;
+		$this->tempDir = $tempDir;
+	}
+
+	protected function getCampaignId(): ?string
+	{
+		return $this->campaignId;
+	}
+
+	protected function setCampaignId(string $campaignId): void
+	{
+		$this->campaignId = $campaignId;
+	}
+
+	protected function getCurrency(): ?string
+	{
+		return $this->currency;
+	}
+
+	protected function setCurrency(string $currency): void
+	{
+		$this->currency = $currency;
 	}
 
 	/**
@@ -129,6 +163,18 @@ class MailChimpClient
 	{
 		if (empty($this->config->listId)) {
 			throw new CredentialsNotSetException('ListId must be set');
+		}
+	}
+
+	private function checkStore(): void
+	{
+		if ($this->config->store === null) {
+			throw new CredentialsNotSetException('Store is not set');
+		}
+		$file = $this->tempDir . '/store_' . $this->config->store->id;
+		if (!file_exists($file)) {
+			$this->createStore();
+			file_put_contents($file, '');
 		}
 	}
 
@@ -283,5 +329,44 @@ class MailChimpClient
 			$data['merge_fields']['LNAME'] = $surname;
 		}
 		return $this->put("lists/{$this->config->listId}/members/" . md5($email), $data);
+	}
+
+	private function createStore(): void
+	{
+		if ($this->config->store !== null) {
+			try {
+				$this->get('ecommerce/stores/' . $this->config->store->id);
+			} catch (MailChimpClientException $ex) {
+				$this->post('ecommerce/stores', [
+					'id' => $this->config->store->id,
+					'list_id' => $this->config->listId,
+					'name' => $this->config->store->name,
+					'domain' => $this->config->store->domain,
+					'email_address' => $this->config->store->email,
+					'currency_code' => $this->config->store->currency,
+				]);
+			}
+		}
+	}
+
+	public function createCustomer($id, string $email, string $firstName, string $surname): ?stdClass
+	{
+		$this->checkStore();
+		return $this->put("ecommerce/stores/{$this->config->store->id}/customers", [
+			'id' => (string) $id,
+			'email_address' => $email,
+			'first_name' => $firstName,
+			'last_name' => $surname,
+			'opt_in_status' => true
+		]);
+	}
+
+	public function createCart($id, $customerId, float $total = 0, array $lines = [])
+	{
+		foreach ($lines as $line) {
+			if (!($line instanceof Line)) {
+				throw new InvalidStateException;
+			}
+		}
 	}
 }

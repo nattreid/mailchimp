@@ -3,5 +3,6 @@ web:
         mailChimp:
             title: "MailChimp"
             apiKey: "API key"
+            storeId: "ID store"
             list: "List"
             info: "For proper functioning of the services should be set list. If the service is not set, the list will be set up after preference."

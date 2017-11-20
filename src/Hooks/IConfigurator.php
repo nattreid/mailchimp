@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace NAttreid\MailChimp\Hooks;
 
+use NAttreid\MailChimp\DI\MailChimpConfig;
+
 /**
  * Interface IConfigurator
  *

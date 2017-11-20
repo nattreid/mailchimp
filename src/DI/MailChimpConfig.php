@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NAttreid\MailChimp\Hooks;
+namespace NAttreid\MailChimp\DI;
 
 use Nette\SmartObject;
 
@@ -12,6 +12,7 @@ use Nette\SmartObject;
  * @property-read string $dc
  * @property string $apiKey
  * @property string $listId
+ * @property MailChimpStore|null $store
  *
  * @author Attreid <attreid@gmail.com>
  */
@@ -28,6 +29,9 @@ class MailChimpConfig
 	/** @var string */
 	private $listId;
 
+	/** @var MailChimpStore|null */
+	private $store;
+
 	protected function getDc(): ?string
 	{
 		return $this->dc;
@@ -41,7 +45,11 @@ class MailChimpConfig
 	protected function setApiKey(?string $apiKey)
 	{
 		$this->apiKey = $apiKey;
-		@list(, $this->dc) = explode('-', $apiKey);
+		if ($apiKey !== null) {
+			@list(, $this->dc) = explode('-', $apiKey);
+		} else {
+			$this->dc = null;
+		}
 	}
 
 	protected function getListId(): ?string
@@ -53,4 +61,16 @@ class MailChimpConfig
 	{
 		$this->listId = $listId;
 	}
+
+	public function getStore(): ?MailChimpStore
+	{
+		return $this->store;
+	}
+
+	public function setStore(?MailChimpStore $store)
+	{
+		$this->store = $store;
+	}
+
+
 }

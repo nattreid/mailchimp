@@ -9,6 +9,12 @@ smartEmailing:
     apiKey: 'apiKey'
     listId: 'fs5f4s68e' # vychozi seznam pro ukladani kontaktu
     debug: true # default false
+    store:
+        id: 'storeId'
+        name: 'storeName'
+        domain: 'storeDomain'
+        email: 'storeEmail'
+        currency: 'storeCurrency'
 ```
 
 Použití
