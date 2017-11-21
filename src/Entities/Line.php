@@ -9,11 +9,94 @@ use Nette\SmartObject;
 /**
  * Class Line
  *
+ * @property string $id
+ * @property string $productId
+ * @property string $productVariantId
+ * @property int $quantity
+ * @property float $price
+ * @property float $discount
+ *
  * @author Attreid <attreid@gmail.com>
  */
 class Line
 {
 	use SmartObject;
 
+	/** @var string */
+	private $id;
 
+	/** @var string */
+	private $productId;
+
+	/** @var string */
+	private $productVariantId;
+
+	/** @var int */
+	private $quantity;
+
+	/** @var float */
+	private $price;
+
+	/** @var float */
+	private $discount;
+
+	protected function getId(): string
+	{
+		return $this->id;
+	}
+
+	protected function setId(string $id): void
+	{
+		$this->id = $id;
+	}
+
+	protected function getProductId(): string
+	{
+		return $this->productId;
+	}
+
+	protected function setProductId(string $productId): void
+	{
+		$this->productId = $productId;
+	}
+
+	protected function getProductVariantId(): string
+	{
+		return $this->productVariantId;
+	}
+
+	protected function setProductVariantId(string $productVariantId): void
+	{
+		$this->productVariantId = $productVariantId;
+	}
+
+	protected function getQuantity(): int
+	{
+		return $this->quantity;
+	}
+
+	protected function setQuantity(int $quantity): void
+	{
+		$this->quantity = $quantity;
+	}
+
+	protected function getPrice(): float
+	{
+		return $this->price;
+	}
+
+	protected function setPrice(float $price): void
+	{
+		$this->price = $price;
+	}
+
+	protected function getDiscount(): float
+	{
+		return $this->discount;
+	}
+
+	protected function setDiscount(float $discount): void
+	{
+		$this->discount = $discount;
+	}
 }

@@ -349,10 +349,10 @@ class MailChimpClient
 		}
 	}
 
-	public function createCustomer($id, string $email, string $firstName, string $surname): ?stdClass
+	public function createCustomer(string $id, string $email, string $firstName, string $surname): ?stdClass
 	{
 		$this->checkStore();
-		return $this->put("ecommerce/stores/{$this->config->store->id}/customers", [
+		return $this->put("ecommerce/stores/{$this->config->store->id}/customers/{$id}", [
 			'id' => (string) $id,
 			'email_address' => $email,
 			'first_name' => $firstName,
@@ -361,8 +361,9 @@ class MailChimpClient
 		]);
 	}
 
-	public function createCart($id, $customerId, float $total = 0, array $lines = [])
+	public function createCart(string $id, string $customerId, float $total = 0, array $lines = [])
 	{
+
 		foreach ($lines as $line) {
 			if (!($line instanceof Line)) {
 				throw new InvalidStateException;
