@@ -8,7 +8,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\RequestOptions;
 use NAttreid\MailChimp\DI\MailChimpConfig;
+use NAttreid\MailChimp\Entities\Cart;
+use NAttreid\MailChimp\Entities\Customer;
 use NAttreid\MailChimp\Entities\Line;
+use NAttreid\MailChimp\Entities\Product;
 use Nette\InvalidStateException;
 use Nette\SmartObject;
 use Nette\Utils\Json;
@@ -349,25 +352,64 @@ class MailChimpClient
 		}
 	}
 
-	public function createCustomer(string $id, string $email, string $firstName, string $surname): ?stdClass
+	public function saveCustomer(Customer $customer): ?stdClass
 	{
 		$this->checkStore();
-		return $this->put("ecommerce/stores/{$this->config->store->id}/customers/{$id}", [
-			'id' => (string) $id,
-			'email_address' => $email,
-			'first_name' => $firstName,
-			'last_name' => $surname,
-			'opt_in_status' => true
+		return $this->put("ecommerce/stores/{$this->config->store->id}/customers/{$customer->id}", $customer->getData());
+	}
+
+	public function saveProduct(Product $product)
+	{
+		$this->checkStore();
+		$data = $product->getData();
+		try {
+			return $this->patch("ecommerce/stores/{$this->config->store->id}/carts/{$product->id}", $data);
+		} catch (MailChimpClientException $ex) {
+			return $this->post("ecommerce/stores/{$this->config->store->id}/carts", $data);
+		}
+	}
+
+	public function saveCart(Cart $cart): ?stdClass
+	{
+		$this->checkStore();
+
+		$cart->currency = $this->config->store->currency;
+		if ($this->campaignId) {
+			$cart->campaignId = $this->campaignId;
+		}
+
+		$data = $cart->getData();
+
+		try {
+			return $this->patch("ecommerce/stores/{$this->config->store->id}/carts/{$cart->id}", $data);
+		} catch (MailChimpClientException $ex) {
+			return $this->post("ecommerce/stores/{$this->config->store->id}/carts", $data);
+		}
+	}
+
+	public function deleteCart(string $cartId): bool
+	{
+		$this->checkStore();
+		return $this->delete("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}");
+	}
+
+	public function addCartLine(string $cartId, Line $line): ?stdClass
+	{
+		$this->checkStore();
+		return $this->post("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}/lines", $line->getData());
+	}
+
+	public function changeQuantityLine(string $cartId, string $cartLineId, int $quantity): ?stdClass
+	{
+		$this->checkStore();
+		return $this->patch("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}/lines/{$cartLineId}", [
+			'quantity' => $quantity
 		]);
 	}
 
-	public function createCart(string $id, string $customerId, float $total = 0, array $lines = [])
+	public function deleteCartLine(string $cartId, string $cartLineId): bool
 	{
-
-		foreach ($lines as $line) {
-			if (!($line instanceof Line)) {
-				throw new InvalidStateException;
-			}
-		}
+		$this->checkStore();
+		return $this->delete("ecommerce/stores/{$this->config->store->id}/carts{$cartId}/lines/$cartLineId");
 	}
 }

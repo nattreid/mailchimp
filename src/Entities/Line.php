@@ -99,4 +99,15 @@ class Line
 	{
 		$this->discount = $discount;
 	}
+
+	public function getData(): array
+	{
+		return [
+			'id' => $this->id,
+			'product_id' => $this->productId,
+			'product_variant_id' => $this->productVariantId,
+			'quantity' => $this->quantity,
+			'price' => $this->price
+		];
+	}
 }
