@@ -14,7 +14,6 @@ use Nette\SmartObject;
  * @property string $productVariantId
  * @property int $quantity
  * @property float $price
- * @property float $discount
  *
  * @author Attreid <attreid@gmail.com>
  */
@@ -36,9 +35,6 @@ class Line
 
 	/** @var float */
 	private $price;
-
-	/** @var float */
-	private $discount;
 
 	protected function getId(): string
 	{
@@ -88,16 +84,6 @@ class Line
 	protected function setPrice(float $price): void
 	{
 		$this->price = $price;
-	}
-
-	protected function getDiscount(): float
-	{
-		return $this->discount;
-	}
-
-	protected function setDiscount(float $discount): void
-	{
-		$this->discount = $discount;
 	}
 
 	public function getData(): array

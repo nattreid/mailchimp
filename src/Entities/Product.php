@@ -29,6 +29,9 @@ class Product
 	/** @var string */
 	private $image;
 
+	/** @var string */
+	private $url;
+
 	/** @var array */
 	private $variants = [];
 
@@ -62,6 +65,16 @@ class Product
 		$this->image = $image;
 	}
 
+	protected function getUrl(): string
+	{
+		return $this->url;
+	}
+
+	protected function setUrl(string $url): void
+	{
+		$this->url = $url;
+	}
+
 	public function addVariant(string $id, string $title, float $price)
 	{
 		$this->variants[] = [
@@ -78,6 +91,9 @@ class Product
 			'title' => $this->title,
 			'variants' => $this->variants,
 		];
+		if ($this->url) {
+			$data['url'] = $this->url;
+		}
 		if ($this->image) {
 			$data['image_url'] = $this->image;
 		}

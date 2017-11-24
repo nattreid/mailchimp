@@ -363,9 +363,9 @@ class MailChimpClient
 		$this->checkStore();
 		$data = $product->getData();
 		try {
-			return $this->patch("ecommerce/stores/{$this->config->store->id}/carts/{$product->id}", $data);
+			return $this->patch("ecommerce/stores/{$this->config->store->id}/products/{$product->id}", $data);
 		} catch (MailChimpClientException $ex) {
-			return $this->post("ecommerce/stores/{$this->config->store->id}/carts", $data);
+			return $this->post("ecommerce/stores/{$this->config->store->id}/products", $data);
 		}
 	}
 
@@ -410,6 +410,6 @@ class MailChimpClient
 	public function deleteCartLine(string $cartId, string $cartLineId): bool
 	{
 		$this->checkStore();
-		return $this->delete("ecommerce/stores/{$this->config->store->id}/carts{$cartId}/lines/$cartLineId");
+		return $this->delete("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}/lines/$cartLineId");
 	}
 }
