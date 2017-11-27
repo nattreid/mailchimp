@@ -11,6 +11,7 @@ use NAttreid\MailChimp\DI\MailChimpConfig;
 use NAttreid\MailChimp\Entities\Cart;
 use NAttreid\MailChimp\Entities\Customer;
 use NAttreid\MailChimp\Entities\Line;
+use NAttreid\MailChimp\Entities\Order;
 use NAttreid\MailChimp\Entities\Product;
 use Nette\InvalidStateException;
 use Nette\SmartObject;
@@ -411,5 +412,51 @@ class MailChimpClient
 	{
 		$this->checkStore();
 		return $this->delete("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}/lines/$cartLineId");
+	}
+
+	public function createOrder(Order $order): ?stdClass
+	{
+		$this->checkStore();
+
+		$order->currency = $this->config->store->currency;
+		if ($this->campaignId) {
+			$order->campaignId = $this->campaignId;
+		}
+
+		$data = $order->getData();
+
+		return $this->post("ecommerce/stores/{$this->config->store->id}/orders", $data);
+	}
+
+	public function setOrderPayed(string $id): ?stdClass
+	{
+		$this->checkStore();
+		return $this->patch("ecommerce/stores/{$this->config->store->id}/orders/{$id}", [
+			'financial_status' => 'paid'
+		]);
+	}
+
+	public function setOrderRefunded(string $id): ?stdClass
+	{
+		$this->checkStore();
+		return $this->patch("ecommerce/stores/{$this->config->store->id}/orders/{$id}", [
+			'financial_status' => 'refunded'
+		]);
+	}
+
+	public function setOrderCancelled(string $id): ?stdClass
+	{
+		$this->checkStore();
+		return $this->patch("ecommerce/stores/{$this->config->store->id}/orders/{$id}", [
+			'financial_status' => 'cancelled'
+		]);
+	}
+
+	public function setOrderShipped(string $id): ?stdClass
+	{
+		$this->checkStore();
+		return $this->patch("ecommerce/stores/{$this->config->store->id}/orders/{$id}", [
+			'fulfillment_status' => 'shipped'
+		]);
 	}
 }

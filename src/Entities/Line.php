@@ -22,19 +22,19 @@ class Line
 	use SmartObject;
 
 	/** @var string */
-	private $id;
+	protected $id;
 
 	/** @var string */
-	private $productId;
+	protected $productId;
 
 	/** @var string */
-	private $productVariantId;
+	protected $productVariantId;
 
 	/** @var int */
-	private $quantity;
+	protected $quantity;
 
 	/** @var float */
-	private $price;
+	protected $price;
 
 	protected function getId(): string
 	{

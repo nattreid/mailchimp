@@ -7,17 +7,17 @@ namespace NAttreid\MailChimp\Entities;
 /**
  * Class OrderLine
  *
- * @property float $discount
+ * @property float|null $discount
  *
  * @author Attreid <attreid@gmail.com>
  */
 class OrderLine extends Line
 {
 
-	/** @var float */
+	/** @var float|null */
 	private $discount;
 
-	protected function getDiscount(): float
+	protected function getDiscount(): ?float
 	{
 		return $this->discount;
 	}

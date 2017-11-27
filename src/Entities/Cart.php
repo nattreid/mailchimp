@@ -23,25 +23,25 @@ class Cart
 	use SmartObject;
 
 	/** @var string */
-	private $id;
+	protected $id;
 
 	/** @var string */
-	private $customer;
+	protected $customer;
 
 	/** @var string */
-	private $campaignId;
+	protected $campaignId;
 
 	/** @var string */
-	private $url;
+	protected $url;
 
 	/** @var string */
-	private $currency;
+	protected $currency;
 
 	/** @var float */
-	private $total = 0;
+	protected $total = 0;
 
 	/** @var Line[] */
-	private $lines = [];
+	protected $lines = [];
 
 	protected function getId(): string
 	{
