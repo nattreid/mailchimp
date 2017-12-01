@@ -339,17 +339,20 @@ class MailChimpClient
 	{
 		if ($this->config->store !== null) {
 			try {
-				$this->get('ecommerce/stores/' . $this->config->store->id);
+				$response = $this->get('ecommerce/stores/' . $this->config->store->id);
+				if ($response) {
+					return;
+				}
 			} catch (MailChimpClientException $ex) {
-				$this->post('ecommerce/stores', [
-					'id' => $this->config->store->id,
-					'list_id' => $this->config->listId,
-					'name' => $this->config->store->name,
-					'domain' => $this->config->store->domain,
-					'email_address' => $this->config->store->email,
-					'currency_code' => $this->config->store->currency,
-				]);
 			}
+			$this->post('ecommerce/stores', [
+				'id' => $this->config->store->id,
+				'list_id' => $this->config->listId,
+				'name' => $this->config->store->name,
+				'domain' => $this->config->store->domain,
+				'email_address' => $this->config->store->email,
+				'currency_code' => $this->config->store->currency,
+			]);
 		}
 	}
 
@@ -364,10 +367,13 @@ class MailChimpClient
 		$this->checkStore();
 		$data = $product->getData();
 		try {
-			return $this->patch("ecommerce/stores/{$this->config->store->id}/products/{$product->id}", $data);
+			$response = $this->patch("ecommerce/stores/{$this->config->store->id}/products/{$product->id}", $data);
+			if ($response) {
+				return $response;
+			}
 		} catch (MailChimpClientException $ex) {
-			return $this->post("ecommerce/stores/{$this->config->store->id}/products", $data);
 		}
+		return $this->post("ecommerce/stores/{$this->config->store->id}/products", $data);
 	}
 
 	public function saveCart(Cart $cart): ?stdClass
@@ -382,10 +388,13 @@ class MailChimpClient
 		$data = $cart->getData();
 
 		try {
-			return $this->patch("ecommerce/stores/{$this->config->store->id}/carts/{$cart->id}", $data);
+			$response = $this->patch("ecommerce/stores/{$this->config->store->id}/carts/{$cart->id}", $data);
+			if ($response) {
+				return $response;
+			}
 		} catch (MailChimpClientException $ex) {
-			return $this->post("ecommerce/stores/{$this->config->store->id}/carts", $data);
 		}
+		return $this->post("ecommerce/stores/{$this->config->store->id}/carts", $data);
 	}
 
 	public function deleteCart(string $cartId): bool
