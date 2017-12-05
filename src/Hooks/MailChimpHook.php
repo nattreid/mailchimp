@@ -57,7 +57,7 @@ class MailChimpHook extends HookFactory
 			->setDefaultValue($this->configurator->mailChimp->apiKey);
 
 		try {
-			$mailChimpClient = new MailChimpClient(false, $this->configurator->mailChimp, '');
+			$mailChimpClient = new MailChimpClient(false, $this->configurator->mailChimp);
 			$lists = $mailChimpClient->findLists()->lists;
 			$items = [];
 			foreach ($lists as $row) {

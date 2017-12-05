@@ -13,6 +13,8 @@ use NAttreid\MailChimp\Entities\Customer;
 use NAttreid\MailChimp\Entities\Line;
 use NAttreid\MailChimp\Entities\Order;
 use NAttreid\MailChimp\Entities\Product;
+use Nette\Http\Request;
+use Nette\Http\Response;
 use Nette\InvalidStateException;
 use Nette\SmartObject;
 use Nette\Utils\Json;
@@ -24,7 +26,6 @@ use stdClass;
 /**
  * Class Client
  *
- * @property string $campaignId
  * @property string $currency
  *
  * @author Attreid <attreid@gmail.com>
@@ -32,6 +33,8 @@ use stdClass;
 class MailChimpClient
 {
 	use SmartObject;
+
+	private const COOKIE_TIME = '30 days';
 
 	/** @var Client */
 	private $client;
@@ -52,24 +55,42 @@ class MailChimpClient
 	private $campaignId;
 
 	/** @var string */
+	private $emailId;
+
+	/** @var string */
 	private $currency;
 
-	public function __construct(bool $debug, MailChimpConfig $config, string $tempDir)
+	/** @var Request */
+	private $request;
+
+	/** @var Response */
+	private $response;
+
+	public function __construct(bool $debug, MailChimpConfig $config, string $tempDir = null, Request $request = null, Response $response = null)
 	{
 		$this->config = $config;
 		$this->uri = "https://{$config->dc}.api.mailchimp.com/3.0/";
 		$this->debug = $debug;
 		$this->tempDir = $tempDir;
+		$this->request = $request;
+		$this->response = $response;
+
+		$this->emailId = $this->initCookie('mc_eid');
+		$this->campaignId = $this->initCookie('mc_cid');
 	}
 
-	protected function getCampaignId(): ?string
+	private function initCookie(string $variable): ?string
 	{
-		return $this->campaignId;
-	}
-
-	protected function setCampaignId(string $campaignId): void
-	{
-		$this->campaignId = $campaignId;
+		$value = null;
+		if ($this->request && $this->response) {
+			$value = $this->request->getQuery($variable);
+			if (!empty($value)) {
+				$this->response->setCookie($variable, $value, self::COOKIE_TIME);
+			} else {
+				$value = $this->request->getCookie('mc_cid');
+			}
+		}
+		return $value;
 	}
 
 	protected function getCurrency(): ?string
