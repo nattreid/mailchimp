@@ -13,6 +13,7 @@ use Nette\SmartObject;
  * @property string $title
  * @property string $image
  * @property string $url
+ * @property string $vendor
  *
  * @author Attreid <attreid@gmail.com>
  */
@@ -31,6 +32,9 @@ class Product
 
 	/** @var string */
 	private $url;
+
+	/** @var string */
+	private $vendor;
 
 	/** @var array */
 	private $variants = [];
@@ -75,6 +79,16 @@ class Product
 		$this->url = $url;
 	}
 
+	protected function getVendor(): string
+	{
+		return $this->vendor;
+	}
+
+	protected function setVendor(string $vendor): void
+	{
+		$this->vendor = $vendor;
+	}
+
 	public function addVariant(string $id, string $title, float $price)
 	{
 		$this->variants[] = [
@@ -91,6 +105,9 @@ class Product
 			'title' => $this->title,
 			'variants' => $this->variants,
 		];
+		if ($this->vendor) {
+			$data['vendor'] = $this->vendor;
+		}
 		if ($this->url) {
 			$data['url'] = $this->url;
 		}

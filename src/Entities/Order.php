@@ -4,17 +4,31 @@ declare(strict_types=1);
 
 namespace NAttreid\MailChimp\Entities;
 
+use DateTime;
 use Nette\InvalidArgumentException;
 
 /**
  * Class Order
  *
- * @property string $status
+ * @property DateTime $inserted
  *
  * @author Attreid <attreid@gmail.com>
  */
 class Order extends Cart
 {
+	/** @var DateTime */
+	private $inserted;
+
+	protected function getInserted(): DateTime
+	{
+		return $this->inserted;
+	}
+
+	protected function setInserted(DateTime $inserted): void
+	{
+		$this->inserted = $inserted;
+	}
+
 	/**
 	 * @param OrderLine $line
 	 */
@@ -40,6 +54,7 @@ class Order extends Cart
 			'currency_code' => $this->currency,
 			'order_total' => $this->total,
 			'financial_status' => 'pending',
+			'processed_at_foreign' => $this->inserted->format('YYYY-MM-DD hh:mm:ss'),
 			'lines' => $lines
 		];
 		if ($this->campaignId) {
