@@ -35,6 +35,11 @@ class MailChimpExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults, $this->getConfig());
 
+		$mailChimpConfig = $builder->addDefinition($this->prefix('config'))
+			->setType(MailChimpConfig::class)
+			->addSetup(new Statement('$service->apiKey = ?', [$config['apiKey']]))
+			->addSetup(new Statement('$service->listId = ?', [$config['listId']]));
+
 		$store = $config['store'];
 		if ($store !== null) {
 			$mailChimpStore = $builder->addDefinition($this->prefix('store'))
@@ -44,15 +49,10 @@ class MailChimpExtension extends CompilerExtension
 				->addSetup(new Statement('$service->domain = ?', [$store['domain']]))
 				->addSetup(new Statement('$service->email = ?', [$store['email']]))
 				->addSetup(new Statement('$service->currency = ?', [$store['currency']]));
-		}
 
-		$mailChimpConfig = $builder->addDefinition($this->prefix('config'))
-			->setType(MailChimpConfig::class)
-			->addSetup(new Statement('$service->apiKey = ?', [$config['apiKey']]))
-			->addSetup(new Statement('$service->listId = ?', [$config['listId']]));
-
-		if (isset($store['id'])) {
-			$mailChimpConfig->addSetup(new Statement('$service->store = ?', [$mailChimpStore]));
+			if (isset($store['id'])) {
+				$mailChimpConfig->addSetup(new Statement('$service->store = ?', [$mailChimpStore]));
+			}
 		}
 
 		$hook = $builder->getByType(HookService::class);

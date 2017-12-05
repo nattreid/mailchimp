@@ -16,6 +16,7 @@ use NAttreid\MailChimp\Entities\Product;
 use Nette\InvalidStateException;
 use Nette\SmartObject;
 use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 use Nette\Utils\Strings;
 use Psr\Http\Message\ResponseInterface;
 use stdClass;
@@ -84,6 +85,7 @@ class MailChimpClient
 	/**
 	 * @param ResponseInterface $response
 	 * @return stdClass|null
+	 * @throws JsonException
 	 */
 	private function getResponse(ResponseInterface $response): ?stdClass
 	{
@@ -170,6 +172,10 @@ class MailChimpClient
 		}
 	}
 
+	/**
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	private function checkStore(): void
 	{
 		if ($this->config->store === null) {
@@ -335,6 +341,10 @@ class MailChimpClient
 		return $this->put("lists/{$this->config->listId}/members/" . md5($email), $data);
 	}
 
+	/**
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	private function createStore(): void
 	{
 		if ($this->config->store !== null) {
@@ -356,12 +366,24 @@ class MailChimpClient
 		}
 	}
 
+	/**
+	 * @param Customer $customer
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function saveCustomer(Customer $customer): ?stdClass
 	{
 		$this->checkStore();
 		return $this->put("ecommerce/stores/{$this->config->store->id}/customers/{$customer->id}", $customer->getData());
 	}
 
+	/**
+	 * @param Product $product
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function saveProduct(Product $product)
 	{
 		$this->checkStore();
@@ -376,6 +398,12 @@ class MailChimpClient
 		return $this->post("ecommerce/stores/{$this->config->store->id}/products", $data);
 	}
 
+	/**
+	 * @param Cart $cart
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function saveCart(Cart $cart): ?stdClass
 	{
 		$this->checkStore();
@@ -397,18 +425,39 @@ class MailChimpClient
 		return $this->post("ecommerce/stores/{$this->config->store->id}/carts", $data);
 	}
 
+	/**
+	 * @param string $cartId
+	 * @return bool
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function deleteCart(string $cartId): bool
 	{
 		$this->checkStore();
 		return $this->delete("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}");
 	}
 
+	/**
+	 * @param string $cartId
+	 * @param Line $line
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function addCartLine(string $cartId, Line $line): ?stdClass
 	{
 		$this->checkStore();
 		return $this->post("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}/lines", $line->getData());
 	}
 
+	/**
+	 * @param string $cartId
+	 * @param string $cartLineId
+	 * @param int $quantity
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function changeQuantityLine(string $cartId, string $cartLineId, int $quantity): ?stdClass
 	{
 		$this->checkStore();
@@ -417,12 +466,25 @@ class MailChimpClient
 		]);
 	}
 
+	/**
+	 * @param string $cartId
+	 * @param string $cartLineId
+	 * @return bool
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function deleteCartLine(string $cartId, string $cartLineId): bool
 	{
 		$this->checkStore();
 		return $this->delete("ecommerce/stores/{$this->config->store->id}/carts/{$cartId}/lines/$cartLineId");
 	}
 
+	/**
+	 * @param Order $order
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function createOrder(Order $order): ?stdClass
 	{
 		$this->checkStore();
@@ -437,6 +499,12 @@ class MailChimpClient
 		return $this->post("ecommerce/stores/{$this->config->store->id}/orders", $data);
 	}
 
+	/**
+	 * @param string $id
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function setOrderPayed(string $id): ?stdClass
 	{
 		$this->checkStore();
@@ -445,6 +513,12 @@ class MailChimpClient
 		]);
 	}
 
+	/**
+	 * @param string $id
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function setOrderRefunded(string $id): ?stdClass
 	{
 		$this->checkStore();
@@ -453,6 +527,12 @@ class MailChimpClient
 		]);
 	}
 
+	/**
+	 * @param string $id
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function setOrderCancelled(string $id): ?stdClass
 	{
 		$this->checkStore();
@@ -461,6 +541,12 @@ class MailChimpClient
 		]);
 	}
 
+	/**
+	 * @param string $id
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
 	public function setOrderShipped(string $id): ?stdClass
 	{
 		$this->checkStore();
