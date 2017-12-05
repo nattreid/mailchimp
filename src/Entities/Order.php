@@ -54,9 +54,12 @@ class Order extends Cart
 			'currency_code' => $this->currency,
 			'order_total' => $this->total,
 			'financial_status' => 'pending',
-			'processed_at_foreign' => $this->inserted->format('YYYY-MM-DD hh:mm:ss'),
 			'lines' => $lines
 		];
+		if ($this->inserted !== null) {
+			$data['processed_at_foreign'] = $this->inserted->format('YYYY-MM-DD hh:mm:ss');
+		}
+
 		if ($this->campaignId) {
 			$data['campaign_id'] = $this->campaignId;
 		}
