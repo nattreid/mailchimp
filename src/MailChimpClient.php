@@ -87,7 +87,7 @@ class MailChimpClient
 			if (!empty($value)) {
 				$this->response->setCookie($variable, $value, self::COOKIE_TIME);
 			} else {
-				$value = $this->request->getCookie('mc_cid');
+				$value = $this->request->getCookie($variable);
 			}
 		}
 		return $value;
@@ -325,14 +325,21 @@ class MailChimpClient
 
 	/**
 	 * Get information about a specific list member
-	 * @param string $email
+	 * @param string|null $email if null, get member by mc_eid from newsletter
 	 * @return stdClass|null
 	 * @throws CredentialsNotSetException
 	 * @throws MailChimpClientException
 	 */
-	public function getMember(string $email): ?stdClass
+	public function getMember(string $email = null): ?stdClass
 	{
 		$this->checkList();
+		if ($email === null) {
+			if ($this->emailId !== null) {
+				$result = $this->get("lists/{$this->config->listId}/members/?unique_email_id={$this->emailId}");
+				return $result->members[0] ?? null;
+			}
+			return null;
+		}
 		return $this->get("lists/{$this->config->listId}/members/" . md5($email));
 	}
 
