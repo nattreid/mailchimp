@@ -57,7 +57,7 @@ class Order extends Cart
 			'lines' => $lines
 		];
 		if ($this->inserted !== null) {
-			$data['processed_at_foreign'] = $this->inserted->format('YYYY-MM-DD hh:mm:ss');
+			$data['processed_at_foreign'] = $this->inserted->format('Y-m-d H:m:s');
 		}
 
 		if ($this->campaignId) {
