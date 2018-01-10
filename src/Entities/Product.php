@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace NAttreid\MailChimp\Entities;
 
+use DateTime;
 use Nette\SmartObject;
 
 /**
  * Class Product
  *
  * @property string $id
+ * @property DateTime $inserted
  * @property string $title
  * @property string $image
  * @property string $url
@@ -23,6 +25,9 @@ class Product
 
 	/** @var string */
 	private $id;
+
+	/** @var DateTime */
+	private $inserted;
 
 	/** @var string */
 	private $title;
@@ -47,6 +52,16 @@ class Product
 	protected function setId(string $id): void
 	{
 		$this->id = $id;
+	}
+
+	protected function getInserted(): DateTime
+	{
+		return $this->inserted;
+	}
+
+	protected function setInserted(DateTime $inserted): void
+	{
+		$this->inserted = $inserted;
 	}
 
 	protected function getTitle(): string
@@ -89,12 +104,13 @@ class Product
 		$this->vendor = $vendor;
 	}
 
-	public function addVariant(string $id, string $title, float $price)
+	public function addVariant(string $id, string $title, float $price, bool $recommended = false)
 	{
 		$this->variants[] = [
 			'id' => $id,
 			'title' => $title,
-			'price' => $price
+			'price' => $price,
+			'inventory_quantity' => $recommended ? 1 : 0
 		];
 	}
 
@@ -107,6 +123,9 @@ class Product
 		];
 		if ($this->vendor) {
 			$data['vendor'] = $this->vendor;
+		}
+		if ($this->inserted !== null) {
+			$data['published_at_foreign'] = $this->inserted->format('Y-m-d H:m:s');
 		}
 		if ($this->url) {
 			$data['url'] = $this->url;
