@@ -358,7 +358,7 @@ class MailChimpClient
 		$data = [
 			'email_address' => $email,
 			'status_if_new' => 'subscribed',
-			'status' => 'subscribed'
+			'status' => 'pending'
 		];
 		if ($name !== null) {
 			$data['merge_fields']['FNAME'] = $name;
