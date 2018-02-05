@@ -29,9 +29,10 @@ if (trait_exists('NAttreid\Cms\DI\ExtensionTranslatorTrait')) {
 					'webManager'
 				]);
 
-				$mailChimpConfig = new Statement('?->mailChimp \?: ?', ['@' . Configurator::class, '@' . MailChimpConfig::class]);
+				return new Statement('?->mailChimp \?: ?', ['@' . Configurator::class, '@' . MailChimpConfig::class]);
+			} else {
+				return parent::prepareHook($mailChimpConfig);
 			}
-			return $mailChimpConfig;
 		}
 	}
 } else {
