@@ -3,7 +3,7 @@
 Nastavení v **config.neon**
 ```neon
 extensions:
-    smartEmailing: NAtrreid\MailChimp\DI\MailChimpExtension
+    smartEmailing: NAttreid\MailChimp\DI\MailChimpExtension
 
 smartEmailing:
     apiKey: 'apiKey'
