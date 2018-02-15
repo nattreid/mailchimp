@@ -101,7 +101,7 @@ class Cart
 	public function addLine(Line $line): void
 	{
 		$this->lines[] = $line;
-		$this->total = ($line->price * $line->quantity);
+		$this->total += ($line->price * $line->quantity);
 	}
 
 	public function getData(): array

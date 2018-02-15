@@ -38,7 +38,7 @@ class Order extends Cart
 			throw new InvalidArgumentException(__METHOD__ . ' Expects instance of OrderLine, you passed ' . get_class($line));
 		}
 		$this->lines[] = $line;
-		$this->total = (($line->price - $line->discount) * $line->quantity);
+		$this->total += (($line->price - $line->discount) * $line->quantity);
 	}
 
 	public function getData(): array
