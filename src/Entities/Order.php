@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace NAttreid\MailChimp\Entities;
 
-use DateTime;
+use DateTimeInterface;
 use Nette\InvalidArgumentException;
 
 /**
  * Class Order
  *
- * @property DateTime $inserted
+ * @property DateTimeInterface $inserted
  *
  * @author Attreid <attreid@gmail.com>
  */
 class Order extends Cart
 {
-	/** @var DateTime */
+	/** @var DateTimeInterface */
 	private $inserted;
 
-	protected function getInserted(): DateTime
+	protected function getInserted(): DateTimeInterface
 	{
 		return $this->inserted;
 	}
 
-	protected function setInserted(DateTime $inserted): void
+	protected function setInserted(DateTimeInterface $inserted): void
 	{
 		$this->inserted = $inserted;
 	}
