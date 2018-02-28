@@ -13,6 +13,8 @@ use Nette\SmartObject;
  * @property string $email
  * @property string $firstName
  * @property string $surname
+ * @property int $countOrders
+ * @property float $totalSpent
  * @property bool $optStatus
  *
  * @author Attreid <attreid@gmail.com>
@@ -76,6 +78,26 @@ class Customer
 		$this->surname = $surname;
 	}
 
+	protected function getCountOrders(): int
+	{
+		return $this->countOrders;
+	}
+
+	protected function setCountOrders(int $countOrders): void
+	{
+		$this->countOrders = $countOrders;
+	}
+
+	protected function getTotalSpent(): float
+	{
+		return $this->totalSpent;
+	}
+
+	protected function setTotalSpent(float $totalSpent): void
+	{
+		$this->totalSpent = $totalSpent;
+	}
+
 	protected function getOptStatus(): bool
 	{
 		return $this->optStatus;
@@ -93,7 +115,9 @@ class Customer
 			'email_address' => $this->email,
 			'first_name' => $this->firstName,
 			'last_name' => $this->surname,
-			'opt_in_status' => $this->optStatus
+			'orders_count' => $this->countOrders,
+			'total_spent' => $this->totalSpent,
+			'opt_in_status' => $this->optStatus,
 		];
 	}
 }
