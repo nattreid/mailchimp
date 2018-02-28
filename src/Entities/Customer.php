@@ -35,6 +35,12 @@ class Customer
 	/** @var string */
 	private $surname;
 
+	/** @var int */
+	private $countOrders = 0;
+
+	/** @var float */
+	private $totalSpent = 0;
+
 	/** @var bool */
 	private $optStatus = true;
 
@@ -110,7 +116,7 @@ class Customer
 
 	public function getData(): array
 	{
-		return [
+		$data = [
 			'id' => (string) $this->id,
 			'email_address' => $this->email,
 			'first_name' => $this->firstName,
