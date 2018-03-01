@@ -116,7 +116,7 @@ class Customer
 
 	public function getData(): array
 	{
-		$data = [
+		return [
 			'id' => (string) $this->id,
 			'email_address' => $this->email,
 			'first_name' => $this->firstName,
