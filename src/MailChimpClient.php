@@ -6,6 +6,7 @@ namespace NAttreid\MailChimp;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use NAttreid\MailChimp\DI\MailChimpConfig;
 use NAttreid\MailChimp\Entities\Cart;
@@ -177,7 +178,7 @@ class MailChimpClient
 						return null;
 					}
 			}
-		} catch (\Exception $ex) {
+		} catch (\Exception|GuzzleException $ex) {
 			throw new MailChimpClientException($ex);
 		}
 		return null;
@@ -346,25 +347,20 @@ class MailChimpClient
 	/**
 	 * Add or update a list member
 	 * @param string $email
-	 * @param string $name
-	 * @param string $surname
+	 * @param array|null $mergeFields
 	 * @return stdClass|null
 	 * @throws CredentialsNotSetException
 	 * @throws MailChimpClientException
 	 */
-	public function createMember(string $email, string $name = null, string $surname = null): ?stdClass
+	public function putMember(string $email, array $mergeFields = null): ?stdClass
 	{
 		$this->checkList();
 		$data = [
 			'email_address' => $email,
-			'status_if_new' => 'subscribed',
-			'status' => 'pending'
+			'status_if_new' => 'pending'
 		];
-		if ($name !== null) {
-			$data['merge_fields']['FNAME'] = $name;
-		}
-		if ($surname !== null) {
-			$data['merge_fields']['LNAME'] = $surname;
+		if ($mergeFields !== null) {
+			$data['merge_fields'] = $mergeFields;
 		}
 		return $this->put("lists/{$this->config->listId}/members/" . md5($email), $data);
 	}
