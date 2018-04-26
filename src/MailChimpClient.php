@@ -366,6 +366,21 @@ class MailChimpClient
 	}
 
 	/**
+	 * Unsubscribe member
+	 * @param string $email
+	 * @return null|stdClass
+	 * @throws CredentialsNotSetException
+	 * @throws MailChimpClientException
+	 */
+	public function unsubscribeMember(string $email): ?stdClass
+	{
+		$this->checkList();
+		return $this->put("lists/{$this->config->listId}/members/" . md5($email), [
+			'status' => 'unsubscribed'
+		]);
+	}
+
+	/**
 	 * @throws CredentialsNotSetException
 	 * @throws MailChimpClientException
 	 */
