@@ -54,7 +54,7 @@ abstract class AbstractMailChimpExtension extends CompilerExtension
 			}
 		}
 
-		$mailChimpConfig = $this->prepareHook($mailChimpConfig);
+		$mailChimpConfig = $this->prepareConfig($mailChimpConfig);
 
 		$tempDir = Helpers::expand($config['tempDir'], $builder->parameters);
 
@@ -63,7 +63,7 @@ abstract class AbstractMailChimpExtension extends CompilerExtension
 			->setArguments([$config['debug'], $mailChimpConfig, $tempDir]);
 	}
 
-	protected function prepareHook(ServiceDefinition $mailChimpConfig)
+	protected function prepareConfig(ServiceDefinition $mailChimpConfig)
 	{
 		return $mailChimpConfig;
 	}

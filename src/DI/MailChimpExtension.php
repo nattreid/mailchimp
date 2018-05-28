@@ -16,7 +16,7 @@ if (trait_exists('NAttreid\Cms\DI\ExtensionTranslatorTrait')) {
 	{
 		use ExtensionTranslatorTrait;
 
-		protected function prepareHook(ServiceDefinition $mailChimpConfig)
+		protected function prepareConfig(ServiceDefinition $mailChimpConfig)
 		{
 			$builder = $this->getContainerBuilder();
 			$hook = $builder->getByType(HookService::class);
@@ -31,7 +31,7 @@ if (trait_exists('NAttreid\Cms\DI\ExtensionTranslatorTrait')) {
 
 				return new Statement('?->mailChimp \?: ?', ['@' . Configurator::class, '@' . MailChimpConfig::class]);
 			} else {
-				return parent::prepareHook($mailChimpConfig);
+				return parent::prepareConfig($mailChimpConfig);
 			}
 		}
 	}
