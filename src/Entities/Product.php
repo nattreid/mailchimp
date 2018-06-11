@@ -104,14 +104,17 @@ class Product
 		$this->vendor = $vendor;
 	}
 
-	public function addVariant(string $id, string $title, float $price, bool $recommended = false)
+	public function addVariant(string $id, string $title, float $price, int $quantity = null)
 	{
-		$this->variants[] = [
+		$data = [
 			'id' => $id,
 			'title' => $title,
-			'price' => $price,
-			'inventory_quantity' => $recommended ? 1 : 0
+			'price' => $price
 		];
+		if ($quantity !== null) {
+			$data['inventory_quantity'] = $quantity;
+		}
+		$this->variants[] = $data;
 	}
 
 	public function getData(): array
