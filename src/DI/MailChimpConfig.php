@@ -9,9 +9,9 @@ use Nette\SmartObject;
 /**
  * Class MailChimpConfig
  *
- * @property-read string $dc
- * @property string $apiKey
- * @property string $listId
+ * @property-read string|null $dc
+ * @property string|null $apiKey
+ * @property string|null $listId
  * @property MailChimpStore|null $store
  *
  * @author Attreid <attreid@gmail.com>
@@ -20,13 +20,13 @@ class MailChimpConfig
 {
 	use SmartObject;
 
-	/** @var string */
+	/** @var string|null */
 	private $dc;
 
-	/** @var string */
+	/** @var string|null */
 	private $apiKey;
 
-	/** @var string */
+	/** @var string|null */
 	private $listId;
 
 	/** @var MailChimpStore|null */
