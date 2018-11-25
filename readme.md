@@ -9,6 +9,7 @@ smartEmailing:
     apiKey: 'apiKey'
     listId: 'fs5f4s68e' # vychozi seznam pro ukladani kontaktu
     debug: true # default false
+    dc: mailer # https://developer.mailchimp.com/documentation/mailchimp/guides/get-started-with-mailchimp-api-3/#resources
     store:
         id: 'storeId'
         name: 'storeName'
