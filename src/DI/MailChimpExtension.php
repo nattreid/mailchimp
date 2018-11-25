@@ -14,8 +14,6 @@ use Nette\DI\Statement;
 if (trait_exists('NAttreid\Cms\DI\ExtensionTranslatorTrait')) {
 	class MailChimpExtension extends AbstractMailChimpExtension
 	{
-		use ExtensionTranslatorTrait;
-
 		protected function prepareConfig(ServiceDefinition $mailChimpConfig)
 		{
 			$builder = $this->getContainerBuilder();
