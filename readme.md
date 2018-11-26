@@ -20,7 +20,7 @@ smartEmailing:
 Použití
 
 ```php
-/** @var NAttreid\MailChimp\MailChimpClient @inject */
+/** @var \NAttreid\MailChimp\MailChimpClient @inject */
 public $mailChimp;
 
 ```
