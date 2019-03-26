@@ -121,7 +121,7 @@ class MailChimpClient
 	private function getClient(): Client
 	{
 		if ($this->client === null) {
-			if (Strings::match($this->config->dc, '/^us([1-9]{1,2})$/') === null) {
+			if (Strings::match($this->config->dc, '/^us([0-9]{1,2})$/') === null) {
 				throw new InvalidStateException('Invalid dc (available: us1 - us99)');
 			}
 			$this->client = new Client(['base_uri' => $this->uri]);
